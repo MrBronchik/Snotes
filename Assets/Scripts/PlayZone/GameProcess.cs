@@ -108,6 +108,6 @@ public class GameProcess : MonoBehaviour
             yield return null;
         }
 
-        yield return null;
+        //yield return null;
     }
 }
