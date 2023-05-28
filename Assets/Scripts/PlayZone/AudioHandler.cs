@@ -10,6 +10,7 @@ public class AudioHandler : MonoBehaviour
 
     public void LoadMusic(string musicPath) {
         StartCoroutine(LoadAudio(musicPath));
+        audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
     }
 
     private IEnumerator LoadAudio(string path) {

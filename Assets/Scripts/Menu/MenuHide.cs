@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class MenuHide : MonoBehaviour
-
 {
     [SerializeField] float timeLerpKef;
 

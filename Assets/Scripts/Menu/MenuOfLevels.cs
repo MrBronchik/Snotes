@@ -36,9 +36,6 @@ public class MenuOfLevels : MonoBehaviour
     // Generates the book's page with available levels
     public void OnUpdate() { // NOT UPDATE FUNCTION!!!!!
 
-        /*mainMenuGO.SetActive(false);
-        songMenuGO.SetActive(true);*/
-
         // Clears the space for it
         foreach (Transform child in lvlParent.transform) {
             Destroy(child.gameObject);

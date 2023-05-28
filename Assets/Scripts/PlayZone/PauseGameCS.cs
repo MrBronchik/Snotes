@@ -23,6 +23,7 @@ public class PauseGameCS : MonoBehaviour
         Time.timeScale = 1f;
         gamePaused = false;
         pauseUI.SetActive(false);
+        audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");   // Only music rn
         audioSource.UnPause();
     }
 }

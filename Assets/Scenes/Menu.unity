@@ -3885,12 +3885,24 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1733470796}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 15
+  m_MaxValue: 2
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1011739436}
+        m_TargetAssemblyTypeName: SettingHandler, Assembly-CSharp
+        m_MethodName: SetMusicVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &785121337
 GameObject:
   m_ObjectHideFlags: 0
@@ -5107,10 +5119,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1011739430}
   - component: {fileID: 1011739431}
-  - component: {fileID: 1011739432}
   - component: {fileID: 1011739433}
   - component: {fileID: 1011739434}
   - component: {fileID: 1011739435}
+  - component: {fileID: 1011739432}
+  - component: {fileID: 1011739436}
   m_Layer: 0
   m_Name: MenuHandler
   m_TagString: Untagged
@@ -5209,6 +5222,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db677659a8dca124b8a4d0a28ea5a876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1011739436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011739429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d839ed241b584440919673b4d91366c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SFXSlider: {fileID: 1069084474}
+  MusicSlider: {fileID: 765060283}
 --- !u!1 &1013903160
 GameObject:
   m_ObjectHideFlags: 0
@@ -5944,12 +5971,24 @@ MonoBehaviour:
   m_HandleRect: {fileID: 785121338}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 15
+  m_MaxValue: 2
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1011739436}
+        m_TargetAssemblyTypeName: SettingHandler, Assembly-CSharp
+        m_MethodName: SetSFXVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1073509156
 GameObject:
   m_ObjectHideFlags: 0
@@ -8601,7 +8640,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: v 0.5.6
+  m_Text: v 0.5.7
 --- !u!222 &1642949694
 CanvasRenderer:
   m_ObjectHideFlags: 0
