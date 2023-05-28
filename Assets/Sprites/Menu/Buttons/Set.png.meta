@@ -135,7 +135,7 @@ TextureImporter:
       213: 4007348119030579523
     second: Settings
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -156,7 +156,6 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -195,7 +194,6 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -235,30 +233,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Server
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -1206,51 +1180,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      Exit: -4678728812461677680
-      Left_Pressed: -5070977952515305740
-      Right_Active: -750080330671155849
-      Pause: 1709242585662161586
-      Green_Note_Black: -1419127685798676425
-      Orange_Note: 1347876615452968405
-      Pink_Black Pressed: 2173239620405203007
-      Pink_Black: -7930348341391806515
-      Blue_Note_Black: 7000269054755470193
-      Right_disabled: 8025587045151364492
-      Blue_Black Pressed: 3553923059935295675
-      Pink: -4259082810035160237
-      Green_Black: -8879028330229637814
-      Left_disabled: 1040348459085153092
-      Small_button: 2788849608602621553
-      Green_Black Pressed: 1561911890247206740
-      Pink_Note_Black: 2634163375383086408
-      Snow_3: -4378797710859549666
-      Blue_Pressed: -7026240478331550470
-      Settings: 4007348119030579523
-      Pink Pressed: 2844007018818766081
-      Orange_Black: 3847087693879862938
-      Snow_4 Pressed: -3251431140130437533
-      Blue: -4836669311847700956
-      Snow_2 Pressed: 6336898547476321363
-      Orange_Note_Black: -3343217745243590005
-      Big_button: -3034635044360747858
-      Green_Note: -4700656402103179296
-      Blue_Black: 1021963298582083004
-      Snow_1 Pressed: -4998766921707954038
-      Right_Pressed: 7606137217626533818
-      Green: 4003426142223231011
-      Pause Pressed: 5849544522290482525
-      Blue_Note: 6819507055594666199
-      Snow_2: -5281111534082226694
-      Green_Pressed: -3022531823760080915
-      Pink_Note: 5843313964349547776
-      Snow_3 Pressed: 5370034687995189201
-      Left_Active: 5897629214333249997
-      Snow_1: 8612039424971352273
-      Orange_Pressed: -7564011203842443630
-      Snow_4: 2710347643801035848
-      Orange_Black Pressed: -3968639766534024782
-      Orange: 3143922356029946234
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
