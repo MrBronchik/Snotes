@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     private void Awake() {
         if (instance == null) {
             instance = this;
-            DontDestroyOnLoad(this);
+ 
         } else if (instance != null) {
             Destroy(this);
         }
