@@ -6,7 +6,6 @@ using UnityEngine;
 public class ButtonActivator : MonoBehaviour
 {
     [Header ("Other Scripts")]
-    [SerializeField] Detector1 detector1;
     [SerializeField] FrozeButton frozeButton;
     [SerializeField] PauseGameCS pauseGameCS;
 
@@ -37,6 +36,6 @@ public class ButtonActivator : MonoBehaviour
 #endregion
 
     public void OnCircledButtonClick(int id) {
-        detector1.CheckTrigger(id);
+        //detector1.CheckTrigger(id);
     }
 }

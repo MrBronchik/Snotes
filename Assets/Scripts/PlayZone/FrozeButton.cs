@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class FrozeButton : MonoBehaviour
 {
-    public Detector1 detector1;
-
     [SerializeField] Button[] frozenButtons;
     [SerializeField] Sprite[] frozeVisualLevels;
     private int[] frozenButtonLevel = {0, 0, 0, 0};
@@ -36,7 +34,7 @@ public class FrozeButton : MonoBehaviour
     // Only for not touch screens, to check if button is pressed or melt
     public void keyCheck(int index) {
         if (frozenButtonLevel[index] == 0) {
-            detector1.CheckTrigger(index);
+            //detector1.CheckTrigger(index);
         } else {
             meltButtonWithIndex(index);
         }
