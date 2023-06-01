@@ -30,7 +30,7 @@ public class PlayZoneHandler : MonoBehaviour
 
     private float m_versionOfMusic;                                                                                   // version of schedule file                     // not used
     //private float m_bpm;                                                                                              // BPM of music                                 // not used
-    public float m_delay_secs;                                                                                        // delay when level starts
+    [System.NonSerialized] public float m_delay_secs;                                                                                        // delay when level starts
     private float m_camSpeed;
     private float m_detectorThickness;
     private float m_lvlLength_secs;
@@ -41,12 +41,12 @@ public class PlayZoneHandler : MonoBehaviour
     public bool levelIsCompleted = false;
 
 
-    private void Start()
+    private void Awake()
     {
         m_scrWidth = 2 * m_playLineCamera.GetComponent<Camera>().aspect * m_playLineCamera.GetComponent<Camera>().orthographicSize;
 
         // Load schedule
-        LaunchLevel();
+        SetUpLevel();
 
         StartCoroutine(MovingPlayLineCamera());
 
@@ -54,11 +54,13 @@ public class PlayZoneHandler : MonoBehaviour
         buttonHandler.PassReference(this);
     }
 
-    private void LaunchLevel()
+    private void SetUpLevel()
     {
         // Load music
         audioHandler.LoadMusic(PlayerPrefs.GetString("music path"));
+        Debug.Log(PlayerPrefs.GetString("music path"));
 
+        // Loads Main level data
         StreamReader file = new StreamReader(PlayerPrefs.GetString("txt path"));
 
         string line;
@@ -90,15 +92,40 @@ public class PlayZoneHandler : MonoBehaviour
 
         m_lvlLength_secs = float.Parse(line);
 
+        // Loads all the aobjects from lvl file
         dataHandler.ImportData(file, this);
 
+        // Sets End object
         GameObject go_end = Instantiate(m_endPrefab);
         go_end.transform.position = new Vector3(
                m_lvlLength_secs * m_camSpeed + m_scrWidth / 2,
                0.0f,
                0.0f
                );
+
         go_end.transform.parent = m_objectStorer.transform;
+        
+        // Sets camera's location 
+        if (m_delay_secs < 0)   // Music starts before the level
+        {
+            m_playLineCamera.transform.position = new Vector3(
+                (m_delay_secs - secondsToWait) * m_camSpeed,
+                m_playLineCamera.transform.position.y,
+                m_playLineCamera.transform.position.z
+                );
+
+            StartCoroutine(audioHandler.PlayIn(m_delay_secs + secondsToWait));
+        }
+        else
+        {
+            m_playLineCamera.transform.position = new Vector3(
+                -secondsToWait * m_camSpeed,
+                m_playLineCamera.transform.position.y,
+                m_playLineCamera.transform.position.z
+                );
+            StartCoroutine(audioHandler.PlayIn(secondsToWait));
+        }
+
     }
 
     public void PlaceNote(int id, float time_secs)
@@ -125,34 +152,12 @@ public class PlayZoneHandler : MonoBehaviour
     }
 
     // Revealing a name of level on the beginning
-    //IEnumerator StartRevealOfLevelName() {
-
-    //    Camera camera_ = Camera.main;
-    //    float halfHeight_ = camera_.orthographicSize;
-    //    float halfWidth_ = camera_.aspect * halfHeight_;
-    //    float needsToWaitAdditionly_ = halfWidth_ / m_note_speed;
-
-    //    if (m_delay_secs < 0) {
-    //        m_playLineCamera.transform.position = new Vector3(-halfWidth_ + (m_delay_secs * m_note_speed), 0, 0);
-    //    } else {
-    //        m_playLineCamera.transform.position = new Vector3(-halfWidth_, 0, 0); 
-    //    }
-
-    //    startText.text = Path.GetFileNameWithoutExtension(musicPath);
-    //    yield return new WaitForSeconds(secondsToWait);
-    //    startText.gameObject.SetActive(false);
-
-    //    //m_playLineCamera.Play();
-        
-    //    // Set time when music starts to play
-    //    if (m_delay_secs < 0) {
-    //        yield return new WaitForSeconds(needsToWaitAdditionly_);
-    //    } else {
-    //        yield return new WaitForSeconds(m_delay_secs + needsToWaitAdditionly_);
-    //    }
-    //    // Play music
-    //    audioHandler.audioSource.Play();
-    //}
+    IEnumerator StartRevealOfLevelName(string levelName)
+    {
+        startText.text = levelName;
+        yield return new WaitForSeconds(secondsToWait);
+        startText.gameObject.SetActive(false);
+    }
 
     public void LevelCompleted()
     {

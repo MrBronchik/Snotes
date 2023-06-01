@@ -13,7 +13,7 @@ public class DetectionHandler : MonoBehaviour
     private BoxCollider2D m_successDetector;
     private BoxCollider2D m_failureDetector;
 
-    private void Start()
+    private void Awake()
     {
         m_successDetector = m_functionalDetectorsParent.transform.GetChild(0).GetComponent<BoxCollider2D>();
         m_failureDetector = m_functionalDetectorsParent.transform.GetChild(1).GetComponent<BoxCollider2D>();

@@ -8,6 +8,7 @@ public class AudioHandler : MonoBehaviour
 {
     [SerializeField] public AudioSource audioSource;
 
+    private float secsLeftToPlay;
     public void LoadMusic(string musicPath) {
         StartCoroutine(LoadAudio(musicPath));
         audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
@@ -24,5 +25,12 @@ public class AudioHandler : MonoBehaviour
         string audioToLoad = path;
         WWW request = new WWW(audioToLoad);
         return request;
+    }
+
+    public IEnumerator PlayIn(float secsToWait)
+    {
+        yield return new WaitForSeconds(secsToWait);
+        Debug.Log("Audio start playing");
+        audioSource.Play();
     }
 }

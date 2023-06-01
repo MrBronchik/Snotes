@@ -6,7 +6,7 @@ using UnityEngine;
 public class ButtonActivator : MonoBehaviour
 {
     [Header ("Other Scripts")]
-    [SerializeField] FrozeButton frozeButton;
+    //[SerializeField] FrozeButton frozeButton;
     [SerializeField] PauseGameCS pauseGameCS;
 
     private InputManager inputManagerInst;
@@ -24,13 +24,13 @@ public class ButtonActivator : MonoBehaviour
                 pauseGameCS.UnPauseGame();
             }
         } else if (inputManagerInst.GetKeyDown(KeyBindingActions.FirstBut)) {
-            frozeButton.keyCheck(0);
+            //frozeButton.keyCheck(0);
         } else if (inputManagerInst.GetKeyDown(KeyBindingActions.SecondBut)) {
-            frozeButton.keyCheck(1);
+            //frozeButton.keyCheck(1);
         } else if (inputManagerInst.GetKeyDown(KeyBindingActions.ThirdBut)) {
-            frozeButton.keyCheck(2);
+            //frozeButton.keyCheck(2);
         } else if (inputManagerInst.GetKeyDown(KeyBindingActions.FourthBut)) {
-            frozeButton.keyCheck(3);
+            //frozeButton.keyCheck(3);
         }
     }
 #endregion
