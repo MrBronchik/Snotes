@@ -15,6 +15,7 @@ public class PlayZoneHandler : MonoBehaviour
     [SerializeField] Text startText;                                                                                // text-box with start-revealed name of the level
     [SerializeField] public float secondsToWait;                                                                    // number of seconds that the name of level will stay on the screen
     [SerializeField] GameObject m_playLineCamera;                                                                 // camera
+    [SerializeField] string[] m_noteTags;
 
     [Header("PreFabs")]
     [SerializeField] GameObject[] m_notePrefabs;
@@ -26,7 +27,7 @@ public class PlayZoneHandler : MonoBehaviour
     [SerializeField] DetectionHandler detectionHandler;                                                                           // script of detection
     [SerializeField] DataHandler dataHandler;
     [SerializeField] ButtonHandler buttonHandler;
-    [SerializeField] Concluder concluder;                                                                           // script of resulting
+    [SerializeField] ScoreHandler scoreHandler;
 
     private float m_versionOfMusic;                                                                                   // version of schedule file                     // not used
     //private float m_bpm;                                                                                              // BPM of music                                 // not used
@@ -41,7 +42,7 @@ public class PlayZoneHandler : MonoBehaviour
     public bool levelIsCompleted = false;
 
 
-    private void Awake()
+    private void Start()
     {
         m_scrWidth = 2 * m_playLineCamera.GetComponent<Camera>().aspect * m_playLineCamera.GetComponent<Camera>().orthographicSize;
 
@@ -67,6 +68,9 @@ public class PlayZoneHandler : MonoBehaviour
 
         if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
         // m_versionOfMusic = float.Parse(line);
+
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        // m_difficulty = int.Parse(line);
 
         // Set BPM
         if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
@@ -98,7 +102,7 @@ public class PlayZoneHandler : MonoBehaviour
         // Sets End object
         GameObject go_end = Instantiate(m_endPrefab);
         go_end.transform.position = new Vector3(
-               m_lvlLength_secs * m_camSpeed + m_scrWidth / 2,
+               m_lvlLength_secs * m_camSpeed + m_detectorThickness / 2,
                0.0f,
                0.0f
                );
@@ -123,7 +127,8 @@ public class PlayZoneHandler : MonoBehaviour
                 m_playLineCamera.transform.position.y,
                 m_playLineCamera.transform.position.z
                 );
-            StartCoroutine(audioHandler.PlayIn(secondsToWait));
+
+            StartCoroutine(audioHandler.PlayIn(secondsToWait + m_delay_secs));
         }
 
     }
@@ -144,7 +149,7 @@ public class PlayZoneHandler : MonoBehaviour
         GameObject go_froze = Instantiate(m_frozePrefabs[id]);
 
         go_froze.transform.position = new Vector3(
-               time_secs * m_camSpeed,
+               time_secs * m_camSpeed + m_detectorThickness * m_scrWidth / 2,
                0.0f,
                0.0f
                );
@@ -162,6 +167,7 @@ public class PlayZoneHandler : MonoBehaviour
     public void LevelCompleted()
     {
         levelIsCompleted = true;
+        scoreHandler.ShowResults();
     }
 
     IEnumerator MovingPlayLineCamera()
@@ -185,40 +191,24 @@ public class PlayZoneHandler : MonoBehaviour
 
     public void ButtonPressed(int index)
     {
-        string crucialTag;
-        switch (index)
+        foreach (GameObject note in detectedNotes)
         {
-            case 0:
-                crucialTag = "RNote";
-                break;
-
-            case 1:
-                crucialTag = "GNote";
-                break;
-
-            case 2:
-                crucialTag = "BNote";
-                break;
-
-            case 3:
-                crucialTag = "ONote";
-                break;
-
-            default:
-                crucialTag = "";
-                break;
-        }
-        foreach(GameObject note in detectedNotes)
-        {
-            if (crucialTag == note.tag)
+            if (m_noteTags[index] == note.tag)
             {
                 detectedNotes.Remove(note);
-                // Call for success
+
+                scoreHandler.Hit(m_playLineCamera.transform.position.x, note.transform.position.x, m_detectorThickness);
+
                 note.SetActive(false);
                 break;
             }
         }
 
-        // Call for miss
+        scoreHandler.Miss();
+    }
+
+    public void NoteSkipped()
+    {
+        scoreHandler.Skip();
     }
 }

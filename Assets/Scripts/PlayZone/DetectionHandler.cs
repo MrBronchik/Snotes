@@ -13,7 +13,7 @@ public class DetectionHandler : MonoBehaviour
     private BoxCollider2D m_successDetector;
     private BoxCollider2D m_failureDetector;
 
-    private void Awake()
+    private void Start()
     {
         m_successDetector = m_functionalDetectorsParent.transform.GetChild(0).GetComponent<BoxCollider2D>();
         m_failureDetector = m_functionalDetectorsParent.transform.GetChild(1).GetComponent<BoxCollider2D>();
@@ -95,7 +95,8 @@ public class DetectionHandler : MonoBehaviour
             if (m_failureDetector.bounds.Contains(obj.transform.position))
             {
                 plh.detectedNotes.RemoveAt(0);
-                // Call failed; 
+
+                plh.NoteSkipped();
             }
             else
             {
@@ -107,16 +108,6 @@ public class DetectionHandler : MonoBehaviour
     public void PassReference(PlayZoneHandler _plh)
     {
         plh = _plh;
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        
     }
     public void SetDetectorThickness(float thicknessRatio, float scrWidth)
     {

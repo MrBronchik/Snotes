@@ -694,18 +694,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 560e1096329e9cc4e8925a6daee19349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frozenButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  frozeVisualLevels:
-  - {fileID: 2710347643801035848, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
-  - {fileID: -4378797710859549666, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
-  - {fileID: -5281111534082226694, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
-  - {fileID: 8612039424971352273, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
-  frozenButtonLevel: 00000000000000000000000000000000
-  frozenButtonMaxLevel: 00000000000000000000000000000000
 --- !u!1 &630226673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1324,7 +1312,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 3.5927048
+  MaxDistance: 2.3144295
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1674,11 +1662,11 @@ GameObject:
   - component: {fileID: 899832448}
   - component: {fileID: 899832451}
   - component: {fileID: 899832452}
-  - component: {fileID: 899832450}
   - component: {fileID: 899832453}
   - component: {fileID: 899832449}
   - component: {fileID: 899832454}
   - component: {fileID: 899832455}
+  - component: {fileID: 899832456}
   m_Layer: 0
   m_Name: PlayZoneHandler
   m_TagString: Untagged
@@ -1716,6 +1704,11 @@ MonoBehaviour:
   startText: {fileID: 796452249}
   secondsToWait: 3
   m_playLineCamera: {fileID: 224851211}
+  m_noteTags:
+  - RNote
+  - GNote
+  - BNote
+  - ONote
   m_notePrefabs:
   - {fileID: 8149019203725754512, guid: e49d8c512d8f20c4aa86fcc08ec32589, type: 3}
   - {fileID: 8149019203725754512, guid: 16b75e93c3b854d429bbd76c590ac417, type: 3}
@@ -1731,7 +1724,7 @@ MonoBehaviour:
   detectionHandler: {fileID: 899832449}
   dataHandler: {fileID: 899832454}
   buttonHandler: {fileID: 899832455}
-  concluder: {fileID: 899832450}
+  scoreHandler: {fileID: 899832456}
   detectedNotes: []
   levelIsCompleted: 0
 --- !u!114 &899832449
@@ -1748,26 +1741,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_functionalDetectorsParent: {fileID: 1820208671}
   m_visualDetector: {fileID: 1770422343}
---- !u!114 &899832450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899832446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a25f197acbb59fd4db6e8ba9bcf69883, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lvlLogo: {fileID: 1421962582}
-  lvlName: {fileID: 638266032}
-  overallHitT: {fileID: 753362454}
-  accuracyT: {fileID: 1528434074}
-  maxComboT: {fileID: 1937507475}
-  clickAccuracyT: {fileID: 1693068168}
-  resultUI: {fileID: 1640358052}
-  gameProcess: {fileID: 899832453}
 --- !u!114 &899832451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1781,7 +1754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseUI: {fileID: 759137956}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 772222625}
   gamePaused: 0
 --- !u!114 &899832452
 MonoBehaviour:
@@ -1869,6 +1842,25 @@ MonoBehaviour:
   - {fileID: -3022531823760080915, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
   - {fileID: -7026240478331550470, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
   - {fileID: -7564011203842443630, guid: e7e9f642ca716f8468b2160cd0377f96, type: 3}
+--- !u!114 &899832456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899832446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f411bb7db9b0f428f9dcde308d3a22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lvlLogo: {fileID: 1421962582}
+  m_lvlName: {fileID: 638266032}
+  overallHitT: {fileID: 753362454}
+  accuracyT: {fileID: 1528434074}
+  maxComboT: {fileID: 1937507475}
+  clickAccuracyT: {fileID: 1693068168}
+  resultUI: {fileID: 1640358052}
 --- !u!1 &933775476
 GameObject:
   m_ObjectHideFlags: 0
