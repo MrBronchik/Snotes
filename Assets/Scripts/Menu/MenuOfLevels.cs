@@ -153,6 +153,7 @@ public class MenuOfLevels : MonoBehaviour
             string difficulty;
             using (StreamReader sr = new StreamReader(difficultyPath))
             {
+                sr.ReadLine();
                 difficulty = sr.ReadLine();
             }
 

@@ -6,220 +6,209 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
+using UnityEditor;
 
 public class PlayZoneHandler : MonoBehaviour
 {
     [Header ("Parameters")]
-    [SerializeField] GameObject parentObj;                                                                          // GO for notes, frozes
-    [SerializeField] Sprite[] sprites;                                                                              // note sprites
-    [SerializeField] GameObject mainGO;                                                                             // idk                                          // not used
+    [SerializeField] public GameObject m_objectStorer;                                                                     // GO for notes, frozes
     [SerializeField] Text startText;                                                                                // text-box with start-revealed name of the level
     [SerializeField] public float secondsToWait;                                                                    // number of seconds that the name of level will stay on the screen
+    [SerializeField] GameObject m_playLineCamera;                                                                 // camera
+    [SerializeField] string[] m_noteTags;
+
+    [Header("PreFabs")]
+    [SerializeField] GameObject[] m_notePrefabs;
+    [SerializeField] GameObject[] m_frozePrefabs;
+    [SerializeField] GameObject m_endPrefab;
 
     [Header("Scripts")]
-    [SerializeField] CameraMovement cameraMovement;                                                                 // script camera
     [SerializeField] AudioHandler audioHandler;                                                                     // script of audio
-    [SerializeField] Detector1 detector1;                                                                           // script of detection
-    [SerializeField] Concluder concluder;                                                                           // script of resulting
+    [SerializeField] DetectionHandler detectionHandler;                                                                           // script of detection
+    [SerializeField] DataHandler dataHandler;
+    [SerializeField] ButtonHandler buttonHandler;
+    [SerializeField] ScoreHandler scoreHandler;
 
-    private float versionOfMusic;                                                                                   // version of schedule file                     // not used
-    private float BPM;                                                                                              // BPM of music                                 // not used
-    public float delayInSecs;                                                                                       // delay when level starts
-    public float speed;                                                                                             // speed of note's flow
+    private float m_versionOfMusic;                                                                                   // version of schedule file                     // not used
+    //private float m_bpm;                                                                                              // BPM of music                                 // not used
+    [System.NonSerialized] public float m_delay_secs;                                                                                        // delay when level starts
+    private float m_camSpeed;
+    private float m_detectorThickness;
+    private float m_lvlLength_secs;
+    private float m_scrWidth;
 
-    List<GameObject> NotesList;                                                                                     // list with Note game objects
-    List<float> timeSchedule;                                                                                       // idk                                          // not used
-    private string[] lvlSchedule;                                                                                   // file with schedule by rows
-    private string txtPath;                                                                                         // path to lvl schedule
-    private string musicPath;                                                                                       // path to music file
-    private int difficultyLevel;                                                                                    // difficulty of level                          // not used
-    private int numberOfNotes;                                                                                      // number of notes
-    private int numberOfFrozes;                                                                                     // number of frozes
-    private int linesToSkip;                                                                                        // for file reading             USEFUL
+    public List<GameObject> detectedNotes;
 
-    private void Start() {
-        NotesList = new List<GameObject>();
-        //timeSchedule = new List<float>();
+    public bool levelIsCompleted = false;
 
-        // Reading paths from selected level
-        txtPath = PlayerPrefs.GetString("txt path");
-        musicPath = PlayerPrefs.GetString("music path");
 
-        // Load music
-        audioHandler.LoadMusic(musicPath);
-        
+    private void Start()
+    {
+        m_scrWidth = 2 * m_playLineCamera.GetComponent<Camera>().aspect * m_playLineCamera.GetComponent<Camera>().orthographicSize;
+
         // Load schedule
-        lvlSchedule = File.ReadAllLines(txtPath);
-        Play();
+        SetUpLevel();
+
+        StartCoroutine(MovingPlayLineCamera());
+
+        detectionHandler.PassReference(this);
+        buttonHandler.PassReference(this);
     }
 
-    public void Play() {
+    private void SetUpLevel()
+    {
+        // Load music
+        audioHandler.LoadMusic(PlayerPrefs.GetString("music path"));
+        Debug.Log(PlayerPrefs.GetString("music path"));
 
-        if(!File.Exists(txtPath)) {
-            Debug.Log("File do not exists!");
-            return;
-        }
+        // Loads Main level data
+        StreamReader file = new StreamReader(PlayerPrefs.GetString("txt path"));
 
-        // Loading of main information
-        versionOfMusic = float.Parse(lvlSchedule[1]);
-        BPM = float.Parse(lvlSchedule[2]);
-        delayInSecs = float.Parse(lvlSchedule[3]);
-        speed = float.Parse(lvlSchedule[4]);
-        detector1.SetDetectorThickness(float.Parse(lvlSchedule[5]));
+        string line;
 
-        // Spawn END of the level
-            GameObject lvlEnder = new GameObject("END");
-            lvlEnder.transform.parent = parentObj.transform;
-            lvlEnder.transform.position = new Vector3(float.Parse(lvlSchedule[6]) * speed + detector1.detectionThickness + 16, 0, 0);
-            lvlEnder.transform.localScale = new Vector3(1, 1, 1);
-            lvlEnder.AddComponent<BoxCollider2D>().size = new Vector2(0.001f, 0.001f);
-        //
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        // m_versionOfMusic = float.Parse(line);
 
-        // Revealing of level's name
-        StartCoroutine(StartRevealOfLevelName());
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        // m_difficulty = int.Parse(line);
 
-        // Loading more information
-        linesToSkip = 8;
-        numberOfNotes = int.Parse(lvlSchedule[linesToSkip]);
-        concluder.stats.numOfNotes = numberOfNotes;
-        linesToSkip += 2;
+        // Set BPM
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        // m_bpm = float.Parse(line);
 
-        // Generate notes
-        SpawnNotes();
+        // Set delay
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        m_delay_secs = float.Parse(line);
 
-        // Again information
-        linesToSkip = linesToSkip + numberOfNotes*5;
-        numberOfFrozes = int.Parse(lvlSchedule[linesToSkip]);
-        linesToSkip += 2;
+        // Set speed
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        m_camSpeed = float.Parse(line);
+        m_camSpeed *= m_scrWidth;  // Multiplying with width as everything should be relative to the screen
 
-        // Generate frozes
-        SpawnFrozes();        
-    }
+        // Set detector thickness
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
+        // m_detectorThickness = float.Parse(line);
+        m_detectorThickness = 0.5f;
+        detectionHandler.SetDetectorThickness(m_detectorThickness, m_scrWidth);
 
-    private void SpawnNotes() {
-        float firstNoteSpawnTime;
-        float presentNoteSpawnTime;
-        int meanwhile;
+        // Set level length
+        if ((line = file.ReadLine()) == null) { Debug.LogError("Unexpected file ending!"); }
 
-        // This cycle calculates how many notes must be played in the same time
-        // If so are, they are placed above each other
-        for (int i = 0; i < numberOfNotes; i++) {
+        m_lvlLength_secs = float.Parse(line);
 
-            // Memorises the time of "first" note
-            firstNoteSpawnTime = float.Parse(lvlSchedule[i*5 + linesToSkip + 1]);
-            meanwhile = 1;
+        // Loads all the aobjects from lvl file
+        dataHandler.ImportData(file, this);
 
-            i++;
+        // Sets End object
+        GameObject go_end = Instantiate(m_endPrefab);
+        go_end.transform.position = new Vector3(
+               m_lvlLength_secs * m_camSpeed + m_detectorThickness / 2,
+               0.0f,
+               0.0f
+               );
 
-            // Checks index error
-            if (i == numberOfNotes) {
-                i--;
-                CreateNote(i, float.Parse(lvlSchedule[i*5 + linesToSkip + 1]) * speed, 0);
-                break;
-            }
-
-            // Checks time of next note
-            presentNoteSpawnTime = float.Parse(lvlSchedule[i*5 + linesToSkip + 1]);
-
-            // Cycle for calculating the number of notes which has to be spawned on each other
-            while (firstNoteSpawnTime == presentNoteSpawnTime) {
-                i++;
-                meanwhile++;
-
-                // Checks index error
-                if (i == numberOfNotes) {
-                    Debug.Log("break");
-                    break;
-                }
-
-                // Checks time again for next note
-                presentNoteSpawnTime = float.Parse(lvlSchedule[i*5 + linesToSkip + 1]);
-            }
-
-            // The lowest position of note
-            float lowestY = -10*meanwhile + 10;
-
-            int row = 0;
-            int j = i - meanwhile;
-            for (; j < i; j++)
-            {
-                // Spawn the note on right position
-                CreateNote(j, (float.Parse(lvlSchedule[j*5 + linesToSkip + 1]) * speed), lowestY + 20*row);
-                row++;
-            }
-            // returing to previous note, because we had to rise 'i' for checking the time of NEXT note
-            i = j - 1;
-        }
-
-        Debug.Log("File successfully imported");
-    }
-
-    // Note spawner
-    private void CreateNote(int koef, float xCoords, float yCoords) {
-
-        GameObject noteToSpawn = new GameObject("N");
-        noteToSpawn.transform.parent = parentObj.transform;
-        noteToSpawn.transform.position = new Vector3(xCoords, yCoords, 1);
-        noteToSpawn.transform.localScale = new Vector3(2, 2, 2);
+        go_end.transform.parent = m_objectStorer.transform;
         
-        noteToSpawn.AddComponent<SpriteRenderer>().sprite = sprites[int.Parse(lvlSchedule[koef*5 + linesToSkip + 2])];
+        // Sets camera's location 
+        if (m_delay_secs < 0)   // Music starts before the level
+        {
+            m_playLineCamera.transform.position = new Vector3(
+                (m_delay_secs - secondsToWait) * m_camSpeed,
+                m_playLineCamera.transform.position.y,
+                m_playLineCamera.transform.position.z
+                );
 
-        noteToSpawn.AddComponent<BoxCollider2D>().size = new Vector2(0.001f, 0.001f);
+            StartCoroutine(audioHandler.PlayIn(m_delay_secs + secondsToWait));
+        }
+        else
+        {
+            m_playLineCamera.transform.position = new Vector3(
+                -secondsToWait * m_camSpeed,
+                m_playLineCamera.transform.position.y,
+                m_playLineCamera.transform.position.z
+                );
 
-        // Gives id (color) to every note, for future use
-        string Arg = lvlSchedule[koef*5 + linesToSkip + 2];
-        GameObject childNoteToSpawn = new GameObject(Arg);
-        childNoteToSpawn.transform.parent = noteToSpawn.transform;
+            StartCoroutine(audioHandler.PlayIn(secondsToWait + m_delay_secs));
+        }
 
-        // Filling list with notes
-        NotesList.Add(noteToSpawn);
     }
 
-    // Froze spawner
-    void SpawnFrozes() {
-        for (int koef = 0; koef < numberOfFrozes; koef++)
-        {
-            GameObject frozeToSpawn = new GameObject("F");
-            frozeToSpawn.transform.parent = parentObj.transform;
-            frozeToSpawn.transform.position = new Vector3(float.Parse(lvlSchedule[koef*5 + linesToSkip + 1]) * speed + 16f, 0, 1);
-            frozeToSpawn.transform.localScale = new Vector3(2,2,2);
+    public void PlaceNote(int id, float time_secs)
+    {
+        GameObject go_note = Instantiate(m_notePrefabs[id]);
 
-            frozeToSpawn.AddComponent<BoxCollider2D>().size = new Vector2(0.001f, 0.001f);
+        go_note.transform.position = new Vector3(
+               time_secs * m_camSpeed,
+               0.0f,
+               0.0f
+               );
+        go_note.transform.parent = m_objectStorer.transform;
+    }
+    public void PlaceFroze(int id, float time_secs)
+    {
+        GameObject go_froze = Instantiate(m_frozePrefabs[id]);
 
-            // Gives id (color) to every froze, for future use
-            string Arg = lvlSchedule[koef*5 + linesToSkip + 2];
-            GameObject childFrozeToSpawn = new GameObject(Arg);
-            childFrozeToSpawn.transform.parent = frozeToSpawn.transform;
-        }
+        go_froze.transform.position = new Vector3(
+               time_secs * m_camSpeed + m_detectorThickness * m_scrWidth / 2,
+               0.0f,
+               0.0f
+               );
+        go_froze.transform.parent = m_objectStorer.transform;
     }
 
     // Revealing a name of level on the beginning
-    IEnumerator StartRevealOfLevelName() {
-
-        Camera camera_ = Camera.main;
-        float halfHeight_ = camera_.orthographicSize;
-        float halfWidth_ = camera_.aspect * halfHeight_;
-        float needsToWaitAdditionly_ = halfWidth_ / speed;
-
-        if (delayInSecs < 0) {
-            cameraMovement.transform.position = new Vector3(-halfWidth_ + (delayInSecs * speed), 0, 0);
-        } else {
-            cameraMovement.transform.position = new Vector3(-halfWidth_, 0, 0); 
-        }
-
-        startText.text = Path.GetFileNameWithoutExtension(musicPath);
+    IEnumerator StartRevealOfLevelName(string levelName)
+    {
+        startText.text = levelName;
         yield return new WaitForSeconds(secondsToWait);
         startText.gameObject.SetActive(false);
+    }
 
-        cameraMovement.Play();
-        
-        // Set time when music starts to play
-        if (delayInSecs < 0) {
-            yield return new WaitForSeconds(needsToWaitAdditionly_);
-        } else {
-            yield return new WaitForSeconds(delayInSecs + needsToWaitAdditionly_);
+    public void LevelCompleted()
+    {
+        levelIsCompleted = true;
+        scoreHandler.ShowResults();
+    }
+
+    IEnumerator MovingPlayLineCamera()
+    {
+        while(true)
+        {
+            m_playLineCamera.transform.position = new Vector3(
+                m_playLineCamera.transform.position.x + Time.deltaTime * m_camSpeed,
+                m_playLineCamera.transform.position.y,
+                m_playLineCamera.transform.position.z
+                );
+
+            yield return null;
         }
-        // Play music
-        audioHandler.audioSource.Play();
+    }
+
+    public void FreezeButton(int index)
+    {
+        buttonHandler.FreezeButton(index);
+    }
+
+    public void ButtonPressed(int index)
+    {
+        foreach (GameObject note in detectedNotes)
+        {
+            if (m_noteTags[index] == note.tag)
+            {
+                detectedNotes.Remove(note);
+
+                scoreHandler.Hit(m_playLineCamera.transform.position.x, note.transform.position.x, m_detectorThickness);
+
+                note.SetActive(false);
+                break;
+            }
+        }
+
+        scoreHandler.Miss();
+    }
+
+    public void NoteSkipped()
+    {
+        scoreHandler.Skip();
     }
 }

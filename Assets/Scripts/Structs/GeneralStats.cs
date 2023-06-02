@@ -1,8 +1,9 @@
 public struct GeneralStats {
+    public float sumOfDistances;
     public int clicksNum;
-    public float accuracy;
     public int skippedNotes;
-    public int numOfNotes;
     public int maxCombo;
     public int combo;
+    public int noteHit;
+    public int numOfNotes;
 }

@@ -25,4 +25,12 @@ public class AudioHandler : MonoBehaviour
         WWW request = new WWW(audioToLoad);
         return request;
     }
+
+    public IEnumerator PlayIn(float secsToWait)
+    {
+        Debug.Log(secsToWait);
+        yield return new WaitForSeconds(secsToWait);
+        Debug.Log("Audio start playing");
+        audioSource.Play();
+    }
 }
