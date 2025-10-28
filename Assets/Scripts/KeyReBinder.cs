@@ -34,7 +34,20 @@ public class KeyReBinder : MonoBehaviour
     }
 
     private void UpdateKeyCode(int keyBindID) {
-        keyCodeToDisplayGroup.transform.GetChild(keyBindID).gameObject.GetComponent<Text>().text = keyBindings.keyBindingChecks[keyBindID].keyCode.ToString();
+        GameObject keyDisplayObject = keyCodeToDisplayGroup.transform.GetChild(keyBindID).gameObject;
+        string keyText = keyBindings.keyBindingChecks[keyBindID].keyCode.ToString();
+        
+        // Update main text
+        Text mainText = keyDisplayObject.GetComponent<Text>();
+        if (mainText != null) {
+            mainText.text = keyText;
+        }
+        
+        // Update shadow text if it exists
+        Text shadowText = keyDisplayObject.GetComponentInChildren<Text>();
+        if (shadowText != null && shadowText != mainText) {
+            shadowText.text = keyText;
+        }
     }
 
     public void ChangeKey(int actionID) {
